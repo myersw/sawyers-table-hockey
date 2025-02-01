@@ -46,6 +46,10 @@ function startGame() {
         goalCount = 0; // Reset goal count
         timer = 0; // Reset timer
         timeStarted = Date.now(); // Reset start time
+
+        // Initialize the pucks (orange and red)
+        initializePucks();
+
         gameLoop();
         startTimer();
     };
@@ -70,6 +74,20 @@ function startTimer() {
             document.getElementById('time').textContent = `Time: ${timer}s`;
         }
     }, 1000);
+}
+
+// Initialize pucks' positions and velocities
+function initializePucks() {
+    // Set initial positions for the pucks
+    puckX = Math.random() * (canvas.width - 100) + 50;  // Random X position for the orange puck
+    puckY = Math.random() * (canvas.height - 100) + 50;  // Random Y position for the orange puck
+    puckDx = Math.random() > 0.5 ? 4 : -4;  // Initial X velocity for the orange puck
+    puckDy = Math.random() > 0.5 ? 4 : -4;  // Initial Y velocity for the orange puck
+
+    // Set initial positions and velocity for the red puck (moving obstacle)
+    redPuckX = canvas.width / 2;  // Start at the center
+    redPuckY = canvas.height / 3;  // Slightly higher to avoid the goal area
+    redPuckDx = 5;  // Speed of the red puck
 }
 
 // Game loop for continuous rendering
@@ -354,9 +372,10 @@ function drawGoal() {
 function drawPuck(x, y) {
     ctx.beginPath();
     ctx.arc(x, y, puckRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'orange'; // The puck will be orange
+    ctx.fillStyle = 'orange';
     ctx.fill();
 }
+
 
 // Add event listener for mouse movement to control striker position
 canvas.addEventListener('mousemove', function(event) {
