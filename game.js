@@ -390,3 +390,26 @@ resizeCanvas();
 // Resize canvas on window resize
 window.addEventListener('resize', resizeCanvas);
 
+// Add event listener for mouse movement to control striker position
+canvas.addEventListener('mousemove', function(event) {
+    if (gameStarted) {
+        strikerX = Math.max(strikerRadius / 2, Math.min(event.offsetX, canvas.width - strikerRadius / 2));
+        strikerY = Math.max(strikerRadius / 2, Math.min(event.offsetY, canvas.height - strikerRadius / 2));
+    }
+});
+
+// Add event listener for touch movement (mobile support)
+canvas.addEventListener('touchmove', function(event) {
+    event.preventDefault();  // Prevent default touch behavior
+    if (gameStarted) {
+        let touch = event.touches[0];
+        strikerX = Math.max(strikerRadius / 2, Math.min(touch.pageX - canvas.offsetLeft, canvas.width - strikerRadius / 2));
+        strikerY = Math.max(strikerRadius / 2, Math.min(touch.pageY - canvas.offsetTop - strikerTouchOffset, canvas.height - strikerRadius / 2));
+    }
+}, { passive: false });
+
+// Close the modal when clicking the close button
+document.getElementById('close-modal').addEventListener('click', function() {
+    document.getElementById('gameOverModal').style.display = 'none';
+    startGame();  // Restart the game
+});
