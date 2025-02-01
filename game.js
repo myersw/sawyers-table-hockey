@@ -85,8 +85,8 @@ function initializePucks() {
     puckDy = Math.random() > 0.5 ? 4 : -4;  // Initial Y velocity for the orange puck
 
     // Set initial positions and velocity for the red puck (moving obstacle)
-    redPuckX = canvas.width / 2;  // Start at the center
-    redPuckY = canvas.height / 3;  // Slightly higher to avoid the goal area
+    redPuckX = canvas.width / 2;  // Start at the center of the goal area
+    redPuckY = goalLineY + 30;  // Position the red puck slightly in front of the goal
     redPuckDx = 5;  // Speed of the red puck
 }
 
@@ -133,7 +133,7 @@ function gameLoop() {
         boardBounce.play(); // Play bounce sound
     }
 
-    // Move the red puck horizontally back and forth within the goal area width
+    // Move the red puck horizontally back and forth in front of the goal
     redPuckX += redPuckDx;
     let goalWidth = 130;  // Slightly smaller goal width
     if (redPuckX <= (canvas.width - goalWidth) / 2 || redPuckX >= (canvas.width + goalWidth) / 2) {
@@ -375,6 +375,7 @@ function drawPuck(x, y) {
     ctx.fillStyle = 'orange';
     ctx.fill();
 }
+
 
 
 // Add event listener for mouse movement to control striker position
