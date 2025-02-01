@@ -4,29 +4,29 @@ let ctx = canvas.getContext("2d");
 let strikerImage = new Image();
 
 // Load sounds
-const goalHorn = new Audio('sounds/goal-horn.mp3');  // Goal horn sound
-const boardBounce = new Audio('sounds/board-bounce.mp3');  // Board bounce sound
-const strikerHit = new Audio('sounds/striker-hit.mp3');  // Striker hit sound
-const redPuckHit = new Audio('sounds/red-puck-hit.mp3');  // Red puck hit sound
-const goalPostHit = new Audio('sounds/goal-post-hit.mp3');  // Goal post hit sound
+const goalHorn = new Audio('sounds/goal-horn.mp3');
+const boardBounce = new Audio('sounds/board-bounce.mp3');
+const strikerHit = new Audio('sounds/striker-hit.mp3');
+const redPuckHit = new Audio('sounds/red-puck-hit.mp3');
+const goalPostHit = new Audio('sounds/goal-post-hit.mp3');
 
-let puckX, puckY, puckDx, puckDy, puckRadius = 12, // Slightly smaller radius for the orange puck
-    strikerRadius = 100, // Adjust this as needed
-    strikerX, strikerY,
-    goalCount = 0,
-    timer = 0,
-    timeStarted = Date.now(),
-    gameStarted = false,
-    redPuckX, redPuckY, redPuckDx = 5, // Increased speed for the red puck
-    redPuckRadius = 20; // Increased radius for the red puck
+let puckX, puckY, puckDx, puckDy, puckRadius, strikerRadius = 100,
+    strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(), 
+    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20;
 
 const MAX_SPEED = 6;  // Maximum allowed speed for the orange puck
 
-// Define the goal line at the bottom of the goal area
-const goalLineY = 40 + 50; // Goal Y position + height of the goal area
+// Detect if the device is mobile (screen width < 768px)
+const isMobile = window.innerWidth < 768;
 
-// Initialize localStorage for storing top 10 times
-let topTimes = JSON.parse(localStorage.getItem('topTimes')) || [];
+// Adjust the sizes for mobile screens
+if (isMobile) {
+    strikerRadius = 80;  // Slightly smaller striker radius on mobile
+    puckRadius = 10;  // Slightly smaller orange puck radius on mobile
+} else {
+    strikerRadius = 100;  // Regular striker radius on desktop
+    puckRadius = 12;  // Regular orange puck radius on desktop
+}
 
 // Start the game
 document.getElementById('start-button').addEventListener('click', startGame);
@@ -63,7 +63,6 @@ function startTimer() {
     let timerInterval = setInterval(function() {
         if (goalCount >= 10) {
             clearInterval(timerInterval); // Stop the timer when 10 goals are scored
-            // Save score to localStorage (optional)
             topTimes.push({ player: playerName, time: timer });
             topTimes.sort((a, b) => a.time - b.time); // Sort by fastest time
             topTimes = topTimes.slice(0, 10); // Keep top 10
@@ -86,7 +85,7 @@ function initializePucks() {
 
     // Set initial positions and velocity for the red puck (moving obstacle)
     redPuckX = canvas.width / 2;  // Start at the center of the goal area
-    redPuckY = goalLineY + 30;  // Position the red puck slightly in front of the goal
+    redPuckY = 90;  // Position the red puck slightly in front of the goal
     redPuckDx = 5;  // Speed of the red puck
 }
 
@@ -168,7 +167,7 @@ function drawStriker(x, y) {
 function drawRedPuck(x, y) {
     ctx.beginPath();
     ctx.arc(x, y, redPuckRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'red'; // The blocker puck will be red
+    ctx.fillStyle = 'red';
     ctx.fill();
 }
 
@@ -236,9 +235,8 @@ function checkCollision() {
 
 // Check if a goal is scored
 function checkScore() {
-    // Define the goal area boundaries
     let goalWidth = 130;  // Slightly smaller goal width
-    let goalHeight = 50; // Height of the goal area
+    let goalHeight = 50; // Shortened height
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
@@ -252,7 +250,6 @@ function checkScore() {
         resetPuck();  // Reset puck position after scoring
     }
 
-    // Check if the game has ended after 10 goals
     if (goalCount >= 10) {
         endGame();
     }
@@ -262,14 +259,13 @@ function checkScore() {
 function resetPuck() {
     puckX = Math.random() * (canvas.width - 100) + 50;
     puckY = Math.random() * (canvas.height - 100) + 50;
-    puckDx = Math.random() > 0.5 ? 4 : -4; // Initial puck speed
-    puckDy = Math.random() > 0.5 ? 4 : -4; // Initial puck speed
+    puckDx = Math.random() > 0.5 ? 4 : -4;
+    puckDy = Math.random() > 0.5 ? 4 : -4;
 }
 
 // End game and show modal
 function endGame() {
     gameStarted = false;
-    // Show the modal with the final score
     document.getElementById('gameOverModal').style.display = 'block';
     document.getElementById('final-score').textContent = `Goals: ${goalCount} | Time: ${timer}s`;
 }
@@ -278,10 +274,8 @@ function endGame() {
 function showEndGameModal() {
     document.getElementById('gameOverModal').style.display = 'block';
     document.getElementById('final-score').textContent = `Goals: ${goalCount} | Time: ${timer}s`;
-
-    // Populate the top 10 times in the modal
     const topTimesList = document.getElementById('top-times-list');
-    topTimesList.innerHTML = ''; // Clear the current list
+    topTimesList.innerHTML = ''; 
 
     topTimes.forEach((entry, index) => {
         const listItem = document.createElement('li');
@@ -290,20 +284,20 @@ function showEndGameModal() {
     });
 }
 
-// Draw the hockey arena: ice surface, center line, center circle, blue lines, and goal
+// Draw the hockey arena
 function drawArena() {
-    ctx.fillStyle = 'white';  // Ice surface should be white
+    ctx.fillStyle = 'white';
     ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);  // Arena with rounded corners
 
     ctx.beginPath();
-    ctx.arc(50, 50, 50, Math.PI, 1.5 * Math.PI);  // Top-left corner
-    ctx.arc(canvas.width - 50, 50, 50, 1.5 * Math.PI, 2 * Math.PI);  // Top-right corner
-    ctx.arc(canvas.width - 50, canvas.height - 50, 50, 0, 0.5 * Math.PI);  // Bottom-right corner
-    ctx.arc(50, canvas.height - 50, 50, 0.5 * Math.PI, Math.PI);  // Bottom-left corner
+    ctx.arc(50, 50, 50, Math.PI, 1.5 * Math.PI); 
+    ctx.arc(canvas.width - 50, 50, 50, 1.5 * Math.PI, 2 * Math.PI);  
+    ctx.arc(canvas.width - 50, canvas.height - 50, 50, 0, 0.5 * Math.PI); 
+    ctx.arc(50, canvas.height - 50, 50, 0.5 * Math.PI, Math.PI); 
     ctx.fillStyle = 'white';
     ctx.fill();
     ctx.lineWidth = 5;
-    ctx.strokeStyle = '#000000';  // Black border for the arena
+    ctx.strokeStyle = '#000000';  
     ctx.stroke();
 
     ctx.beginPath();
@@ -331,21 +325,21 @@ function drawArena() {
     drawGoal();
 }
 
-// Draw the goal at the top center
+// Draw the goal
 function drawGoal() {
     let goalWidth = 130;  // Slightly smaller goal width
     let goalHeight = 50; // Shortened height
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
-    // Goal Posts (thicker)
+    // Goal Posts
     ctx.beginPath();
     ctx.moveTo(goalX, goalY);
-    ctx.lineTo(goalX, goalY + goalHeight); // Left post
+    ctx.lineTo(goalX, goalY + goalHeight); 
     ctx.moveTo(goalX + goalWidth, goalY);
-    ctx.lineTo(goalX + goalWidth, goalY + goalHeight); // Right post
+    ctx.lineTo(goalX + goalWidth, goalY + goalHeight); 
     ctx.strokeStyle = 'red';
-    ctx.lineWidth = 8;  // Thicker goalposts
+    ctx.lineWidth = 8;
     ctx.stroke();
 
     // Crossbar
@@ -353,10 +347,10 @@ function drawGoal() {
     ctx.moveTo(goalX, goalY);
     ctx.lineTo(goalX + goalWidth, goalY);
     ctx.strokeStyle = 'red';
-    ctx.lineWidth = 8;  // Thicker crossbar
+    ctx.lineWidth = 8;  
     ctx.stroke();
 
-    // Netting effect: some horizontal lines
+    // Netting effect
     let netSpacing = 10;
     for (let i = 0; i < goalHeight; i += netSpacing) {
         ctx.beginPath();
@@ -375,7 +369,6 @@ function drawPuck(x, y) {
     ctx.fillStyle = 'orange';
     ctx.fill();
 }
-
 
 
 // Add event listener for mouse movement to control striker position
