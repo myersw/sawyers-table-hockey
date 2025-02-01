@@ -20,6 +20,9 @@ const MAX_SPEED = 6;  // Maximum allowed speed for the orange puck
 const isMobile = window.innerWidth < 768;
 
 // Adjust the sizes for mobile screens
+let goalWidth = isMobile ? 100 : 130;  // Smaller goal on mobile
+let goalHeight = isMobile ? 40 : 50;  // Smaller goal on mobile
+
 if (isMobile) {
     strikerRadius = 80;  // Slightly smaller striker radius on mobile
     puckRadius = 10;  // Slightly smaller orange puck radius on mobile
@@ -134,7 +137,6 @@ function gameLoop() {
 
     // Move the red puck horizontally back and forth in front of the goal
     redPuckX += redPuckDx;
-    let goalWidth = 130;  // Slightly smaller goal width
     if (redPuckX <= (canvas.width - goalWidth) / 2 || redPuckX >= (canvas.width + goalWidth) / 2) {
         redPuckDx = -redPuckDx; // Reverse direction when it reaches the goal posts
     }
@@ -235,8 +237,6 @@ function checkCollision() {
 
 // Check if a goal is scored
 function checkScore() {
-    let goalWidth = 130;  // Slightly smaller goal width
-    let goalHeight = 50; // Shortened height
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
@@ -268,20 +268,24 @@ function endGame() {
     gameStarted = false;
     document.getElementById('gameOverModal').style.display = 'block';
     document.getElementById('final-score').textContent = `Goals: ${goalCount} | Time: ${timer}s`;
+
+    // Load top times from localStorage
+    let topTimes = JSON.parse(localStorage.getItem('topTimes')) || [];
+    const topTimesList = document.getElementById('top-times-list');
+    topTimesList.innerHTML = ''; 
+
+    // Display top 10 fastest times
+    topTimes.forEach((entry, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${index + 1}. ${entry.player}: ${entry.time}s`;
+        topTimesList.appendChild(listItem);
+    });
 }
 
 // Show the end game modal
 function showEndGameModal() {
     document.getElementById('gameOverModal').style.display = 'block';
     document.getElementById('final-score').textContent = `Goals: ${goalCount} | Time: ${timer}s`;
-    const topTimesList = document.getElementById('top-times-list');
-    topTimesList.innerHTML = ''; 
-
-    topTimes.forEach((entry, index) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${index + 1}. ${entry.player}: ${entry.time}s`;
-        topTimesList.appendChild(listItem);
-    });
 }
 
 // Draw the hockey arena
@@ -327,8 +331,6 @@ function drawArena() {
 
 // Draw the goal
 function drawGoal() {
-    let goalWidth = 130;  // Slightly smaller goal width
-    let goalHeight = 50; // Shortened height
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
@@ -369,6 +371,7 @@ function drawPuck(x, y) {
     ctx.fillStyle = 'orange';
     ctx.fill();
 }
+
 
 
 // Add event listener for mouse movement to control striker position
