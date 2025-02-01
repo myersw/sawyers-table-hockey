@@ -383,3 +383,20 @@ document.getElementById('closeModal').addEventListener('click', function() {
     document.getElementById('pregame-menu').style.display = 'block';
     document.getElementById('game-container').style.display = 'none';
 });
+
+// Adjust canvas size dynamically based on screen size
+function resizeCanvas() {
+    if (window.innerWidth < 768) {
+        canvas.width = window.innerWidth * 0.9;  // Mobile: 90% of the screen width
+        canvas.height = window.innerHeight * 0.7; // Mobile: 70% of the screen height
+    } else {
+        canvas.width = 800;  // Desktop: fixed width
+        canvas.height = 600; // Desktop: fixed height
+    }
+}
+
+// Initial canvas resize
+resizeCanvas();
+
+// Resize canvas on window resize
+window.addEventListener('resize', resizeCanvas);
