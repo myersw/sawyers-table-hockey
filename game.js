@@ -11,7 +11,7 @@ const redPuckHit = new Audio('sounds/red-puck-hit.mp3');
 const goalPostHit = new Audio('sounds/goal-post-hit.mp3');
 
 let puckX, puckY, puckDx, puckDy, puckRadius, strikerRadius = 100,
-    strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(), 
+    strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(),
     gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20;
 
 const MAX_SPEED = 6;  // Maximum allowed speed for the orange puck
