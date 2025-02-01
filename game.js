@@ -1,42 +1,36 @@
 // Initialize variables
 let canvas = document.getElementById("gameCanvas");
-canvas.width = 800;  // Explicit canvas width
-canvas.height = 600; // Explicit canvas height
 let ctx = canvas.getContext("2d");
 let strikerImage = new Image();
 
 // Load sounds
-const goalHorn = new Audio('sounds/goal-horn.mp3');  // Goal horn sound
-const boardBounce = new Audio('sounds/board-bounce.mp3');  // Board bounce sound
-const strikerHit = new Audio('sounds/striker-hit.mp3');  // Striker hit sound
-const redPuckHit = new Audio('sounds/red-puck-hit.mp3');  // Red puck hit sound
-const goalPostHit = new Audio('sounds/goal-post-hit.mp3');  // Goal post hit sound
+const goalHorn = new Audio('sounds/goal-horn.mp3');
+const boardBounce = new Audio('sounds/board-bounce.mp3');
+const strikerHit = new Audio('sounds/striker-hit.mp3');
+const redPuckHit = new Audio('sounds/red-puck-hit.mp3');
+const goalPostHit = new Audio('sounds/goal-post-hit.mp3');
 
-let puckX = canvas.width / 2,
-    puckY = canvas.height / 2,
-    puckDx = 4, // Initial speed for the puck
-    puckDy = 4, // Initial speed for the puck
-    puckRadius = 12, // Slightly smaller orange puck
-    strikerRadius = 100, // Adjust this as needed
-    strikerX = canvas.width / 2,
-    strikerY = canvas.height - 80,
-    goalCount = 0,
-    timer = 0,
-    timeStarted = Date.now(),
-    gameStarted = false,
-    redPuckX = (canvas.width - 150) / 2,  // Positioned just below the goal, centered
-    redPuckY = 90, // Positioned below the goal at the top of the canvas
-    redPuckDx = 5, // Increased speed for the red puck
-    redPuckRadius = 20; // Increased radius for the red puck
+let puckX, puckY, puckDx, puckDy, puckRadius, strikerRadius = 100,
+    strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(), 
+    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20;
 
 const MAX_SPEED = 6;  // Maximum allowed speed for the orange puck
-
-// Define the goal line at the bottom of the goal area
-const goalLineY = 40 + 50; // Goal Y position + height of the goal area
 
 // Check if the device is mobile (screen width < 768px)
 const isMobile = window.innerWidth < 768;
 let strikerTouchOffset = 30;  // Stagger the striker above where you touch on mobile
+
+// Adjust the sizes for mobile screens
+let goalWidth = isMobile ? 100 : 130;  // Smaller goal on mobile
+let goalHeight = isMobile ? 40 : 50;  // Smaller goal on mobile
+
+if (isMobile) {
+    strikerRadius = 80;  // Slightly smaller striker radius on mobile
+    puckRadius = 10;  // Slightly smaller orange puck radius on mobile
+} else {
+    strikerRadius = 100;  // Regular striker radius on desktop
+    puckRadius = 12;  // Regular orange puck radius on desktop
+}
 
 // Start the game
 document.getElementById('start-button').addEventListener('click', startGame);
@@ -56,6 +50,10 @@ function startGame() {
         goalCount = 0; // Reset goal count
         timer = 0; // Reset timer
         timeStarted = Date.now(); // Reset start time
+
+        // Initialize the pucks (orange and red)
+        initializePucks();
+
         gameLoop();
         startTimer();
     };
@@ -79,6 +77,20 @@ function startTimer() {
             document.getElementById('time').textContent = `Time: ${timer}s`;
         }
     }, 1000);
+}
+
+// Initialize pucks' positions and velocities
+function initializePucks() {
+    // Set initial positions for the pucks
+    puckX = Math.random() * (canvas.width - 100) + 50;  // Random X position for the orange puck
+    puckY = Math.random() * (canvas.height - 100) + 50;  // Random Y position for the orange puck
+    puckDx = Math.random() > 0.5 ? 4 : -4;  // Initial X velocity for the orange puck
+    puckDy = Math.random() > 0.5 ? 4 : -4;  // Initial Y velocity for the orange puck
+
+    // Set initial positions and velocity for the red puck (moving obstacle)
+    redPuckX = canvas.width / 2;  // Start at the center of the goal area
+    redPuckY = 90;  // Position the red puck slightly in front of the goal
+    redPuckDx = 5;  // Speed of the red puck
 }
 
 // Game loop for continuous rendering
@@ -124,9 +136,8 @@ function gameLoop() {
         boardBounce.play(); // Play bounce sound
     }
 
-    // Move the red puck horizontally back and forth within the goal area width
+    // Move the red puck horizontally back and forth in front of the goal
     redPuckX += redPuckDx;
-    let goalWidth = 150;  // Width of the goal (reduced)
     if (redPuckX <= (canvas.width - goalWidth) / 2 || redPuckX >= (canvas.width + goalWidth) / 2) {
         redPuckDx = -redPuckDx; // Reverse direction when it reaches the goal posts
     }
@@ -159,7 +170,7 @@ function drawStriker(x, y) {
 function drawRedPuck(x, y) {
     ctx.beginPath();
     ctx.arc(x, y, redPuckRadius, 0, Math.PI * 2);
-    ctx.fillStyle = 'red'; // The blocker puck will be red
+    ctx.fillStyle = 'red';
     ctx.fill();
 }
 
@@ -227,9 +238,6 @@ function checkCollision() {
 
 // Check if a goal is scored
 function checkScore() {
-    // Define the goal area boundaries
-    let goalWidth = 150;  // Reduced goal width
-    let goalHeight = 50; // Height of the goal area
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
@@ -243,7 +251,6 @@ function checkScore() {
         resetPuck();  // Reset puck position after scoring
     }
 
-    // Check if the game has ended after 10 goals
     if (goalCount >= 10) {
         endGame();
     }
@@ -253,16 +260,27 @@ function checkScore() {
 function resetPuck() {
     puckX = Math.random() * (canvas.width - 100) + 50;
     puckY = Math.random() * (canvas.height - 100) + 50;
-    puckDx = Math.random() > 0.5 ? 4 : -4; // Initial puck speed
-    puckDy = Math.random() > 0.5 ? 4 : -4; // Initial puck speed
+    puckDx = Math.random() > 0.5 ? 4 : -4;
+    puckDy = Math.random() > 0.5 ? 4 : -4;
 }
 
 // End game and show modal
 function endGame() {
     gameStarted = false;
-    // Show the modal with the final score
     document.getElementById('gameOverModal').style.display = 'block';
     document.getElementById('final-score').textContent = `Goals: ${goalCount} | Time: ${timer}s`;
+
+    // Load top times from localStorage
+    let topTimes = JSON.parse(localStorage.getItem('topTimes')) || [];
+    const topTimesList = document.getElementById('top-times-list');
+    topTimesList.innerHTML = ''; 
+
+    // Display top 10 fastest times
+    topTimes.forEach((entry, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${index + 1}. ${entry.player}: ${entry.time}s`;
+        topTimesList.appendChild(listItem);
+    });
 }
 
 // Show the end game modal
