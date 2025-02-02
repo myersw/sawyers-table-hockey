@@ -192,6 +192,7 @@ function drawGoalLines() {
 }
 
 // Collision detection for the puck and striker
+// Check for collisions with red lines beside the goalposts
 function checkCollision() {
     let dx = puckX - strikerX;
     let dy = puckY - strikerY;
@@ -254,23 +255,21 @@ function checkCollision() {
 
     // Check for collision with the red lines beside the goalposts
     let goalX = (canvas.width - goalWidth) / 2;
-    let lineOffset = 10;
-    let goalY = 40;
+    let lineOffset = 10; // Space between the goalposts and the red lines
+    let lineHeight = goalHeight;  // Length of the red lines
 
-    // Left red line collision
-    if (puckX - puckRadius <= goalX - lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
-        puckDx = -puckDx;
-        puckDy = -puckDy;
-        goalPostHit.play();  // Play goal post hit sound
+    // Left red line (beside the left goalpost)
+    if (puckX - puckRadius <= goalX - lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
+        puckDx = -puckDx; // Reverse direction
+        puckDy = -puckDy; // Reverse direction to make it bounce off
     }
-    
-    // Right red line collision
-    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
-        puckDx = -puckDx;
-        puckDy = -puckDy;
-        goalPostHit.play();  // Play goal post hit sound
+    // Right red line (beside the right goalpost)
+    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
+        puckDx = -puckDx; // Reverse direction
+        puckDy = -puckDy; // Reverse direction to make it bounce off
     }
 }
+
 
 // Check if a goal is scored
 function checkScore() {
