@@ -1,4 +1,4 @@
-// Initialize variables
+// Initialize variables 
 let canvas = document.getElementById("gameCanvas");
 let ctx = canvas.getContext("2d");
 let strikerImage = new Image();
@@ -174,6 +174,23 @@ function drawRedPuck(x, y) {
     ctx.fill();
 }
 
+// Draw the red lines beside the goal posts
+function drawGoalLines() {
+    let goalX = (canvas.width - goalWidth) / 2;
+    let goalY = 40;  // Goal at the top center
+
+    // Draw the red lines beside the goalposts (touching the goal posts)
+    let lineOffset = 10;  // Space between the goal post and the red line
+    ctx.beginPath();
+    ctx.moveTo(goalX - lineOffset, goalY);
+    ctx.lineTo(goalX - lineOffset, goalY + goalHeight); 
+    ctx.moveTo(goalX + goalWidth + lineOffset, goalY);
+    ctx.lineTo(goalX + goalWidth + lineOffset, goalY + goalHeight); 
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+}
+
 // Collision detection for the puck and striker
 function checkCollision() {
     let dx = puckX - strikerX;
@@ -233,6 +250,16 @@ function checkCollision() {
         puckY += Math.sin(redPuckAngle) * overlap;
 
         redPuckHit.play();  // Play red puck hit sound
+    }
+
+    // Check for collision with the red lines
+    let goalX = (canvas.width - goalWidth) / 2;
+    let lineOffset = 10;
+    if ((puckX - puckRadius <= goalX - lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) ||
+        (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= goalY && puckY <= goalY + goalHeight)) {
+        // Reverse puck direction if it hits the red lines
+        puckDx = -puckDx;
+        puckDy = -puckDy;
     }
 }
 
@@ -327,6 +354,7 @@ function drawArena() {
     ctx.lineWidth = 4;
     ctx.stroke();
 
+    drawGoalLines();  // Draw the new goal lines
     drawGoal();
 }
 
