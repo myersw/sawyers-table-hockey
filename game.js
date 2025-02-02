@@ -275,18 +275,20 @@ function checkCollision() {
 // Check if a goal is scored
 function checkScore() {
     let goalX = (canvas.width - goalWidth) / 2;
-    let goalY = 40;  // Goal at the top center
+    let goalY = 40;  // Goal area at the top center
 
-    // Check if puck is fully within the goal area
+    // Check if puck is fully within the goal area (not crossing the goalposts)
     if (puckY - puckRadius < goalY + goalHeight && puckY + puckRadius > goalY &&
         puckX - puckRadius >= goalX && puckX + puckRadius <= goalX + goalWidth) {
-        // Goal scored
+        
+        // Goal scored: Only count the goal if the puck is fully inside the goal width
         goalCount++;
         document.getElementById('goal-count').textContent = `Goals: ${goalCount}`;
         goalHorn.play();  // Play goal horn sound
         resetPuck();  // Reset puck position after scoring
     }
 
+    // Check if goal count reaches 10 and end the game
     if (goalCount >= 10) {
         endGame();
     }
