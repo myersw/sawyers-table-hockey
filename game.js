@@ -239,14 +239,14 @@ function checkCollision() {
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
-    // Left goal post collision
+    // Left goal post collision (Vertical check)
     if (puckX - puckRadius <= goalX && puckY >= goalY && puckY <= goalY + goalHeight) {
         puckDx = -puckDx;
         puckDy = -puckDy;
         goalPostHit.play();  // Play goal post hit sound
     }
 
-    // Right goal post collision
+    // Right goal post collision (Vertical check)
     if (puckX + puckRadius >= goalX + goalWidth && puckY >= goalY && puckY <= goalY + goalHeight) {
         puckDx = -puckDx;
         puckDy = -puckDy;
