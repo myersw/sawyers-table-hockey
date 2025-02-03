@@ -179,8 +179,8 @@ function drawGoalLines() {
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
-    // Draw the red lines beside the goalposts (touching the goal posts)
-    let lineOffset = 10;  // Space between the goal post and the red line
+    // Adjusted red lines
+    let lineOffset = 0;  // Red lines now touch the goal posts
     ctx.beginPath();
     ctx.moveTo(goalX - lineOffset, goalY);
     ctx.lineTo(goalX - lineOffset, goalY + goalHeight); 
@@ -254,7 +254,7 @@ function checkCollision() {
 
     // Check for collision with the red lines beside the goalposts
     let goalX = (canvas.width - goalWidth) / 2;
-    let lineOffset = 10;
+    let lineOffset = 0;
     let goalY = 40;
 
     // Left red line collision
