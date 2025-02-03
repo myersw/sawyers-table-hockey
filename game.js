@@ -373,9 +373,9 @@ function drawGoal() {
     let netSpacing = 10;
     for (let i = 0; i < goalHeight; i += netSpacing) {
         ctx.beginPath();
-        ctx.moveTo(goalX, goalY + i);
-        ctx.lineTo(goalX + goalWidth, goalY + i);
-        ctx.strokeStyle = 'lightgray';
+        ctx.moveTo(goalX + 5, goalY + i);
+        ctx.lineTo(goalX + goalWidth - 5, goalY + i);
+        ctx.strokeStyle = 'white';
         ctx.lineWidth = 2;
         ctx.stroke();
     }
