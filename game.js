@@ -252,24 +252,25 @@ function checkCollision() {
         redPuckHit.play();  // Play red puck hit sound
     }
 
-    // Check for collision with the red lines beside the goalposts
-    let goalX = (canvas.width - goalWidth) / 2;
-    let lineOffset = 0;
-    let goalY = 40;
+// Check for collision with the red lines beside the goalposts
+let goalX = (canvas.width - goalWidth) / 2;
+let lineOffset = 0;
+let goalY = 40;
 
-    // Left red line collision
-    if (puckX - puckRadius <= goalX - lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
-        puckDx = -puckDx;
-        puckDy = -puckDy;
-        goalPostHit.play();  // Play goal post hit sound
-    }
+// Left red line collision
+if (puckX - puckRadius <= goalX - lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
+    puckDx = -puckDx;
+    puckDy = -puckDy;
+    goalPostHit.play();  // Play goal post hit sound
+}
+
+// Right red line collision
+if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
+    puckDx = -puckDx;
+    puckDy = -puckDy;
+    goalPostHit.play();  // Play goal post hit sound
+}
     
-    // Right red line collision
-    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
-        puckDx = -puckDx;
-        puckDy = -puckDy;
-        goalPostHit.play();  // Play goal post hit sound
-    }
 }
 
 // Check if a goal is scored
