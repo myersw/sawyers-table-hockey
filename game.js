@@ -192,7 +192,6 @@ function drawGoalLines() {
 }
 
 // Collision detection for the puck and striker
-// Check for collisions with red lines beside the goalposts
 function checkCollision() {
     let dx = puckX - strikerX;
     let dy = puckY - strikerY;
@@ -255,39 +254,39 @@ function checkCollision() {
 
     // Check for collision with the red lines beside the goalposts
     let goalX = (canvas.width - goalWidth) / 2;
-    let lineOffset = 10; // Space between the goalposts and the red lines
-    let lineHeight = goalHeight;  // Length of the red lines
+    let lineOffset = 10;
+    let goalY = 40;
 
-    // Left red line (beside the left goalpost)
-    if (puckX - puckRadius <= goalX - lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
-        puckDx = -puckDx; // Reverse direction
-        puckDy = -puckDy; // Reverse direction to make it bounce off
+    // Left red line collision
+    if (puckX - puckRadius <= goalX - lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
+        puckDx = -puckDx;
+        puckDy = -puckDy;
+        goalPostHit.play();  // Play goal post hit sound
     }
-    // Right red line (beside the right goalpost)
-    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
-        puckDx = -puckDx; // Reverse direction
-        puckDy = -puckDy; // Reverse direction to make it bounce off
+    
+    // Right red line collision
+    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
+        puckDx = -puckDx;
+        puckDy = -puckDy;
+        goalPostHit.play();  // Play goal post hit sound
     }
 }
-
 
 // Check if a goal is scored
 function checkScore() {
     let goalX = (canvas.width - goalWidth) / 2;
-    let goalY = 40;  // Goal area at the top center
+    let goalY = 40;  // Goal at the top center
 
-    // Check if puck is fully within the goal area (not crossing the goalposts)
+    // Check if puck is fully within the goal area
     if (puckY - puckRadius < goalY + goalHeight && puckY + puckRadius > goalY &&
         puckX - puckRadius >= goalX && puckX + puckRadius <= goalX + goalWidth) {
-        
-        // Goal scored: Only count the goal if the puck is fully inside the goal width
+        // Goal scored
         goalCount++;
         document.getElementById('goal-count').textContent = `Goals: ${goalCount}`;
         goalHorn.play();  // Play goal horn sound
         resetPuck();  // Reset puck position after scoring
     }
 
-    // Check if goal count reaches 10 and end the game
     if (goalCount >= 10) {
         endGame();
     }
