@@ -253,9 +253,24 @@ function checkCollision() {
 
         redPuckHit.play();  // Play red puck hit sound
     }
+
+    // Check if the puck hits the goal posts (left or right goal post)
+    let goalX = (canvas.width - goalWidth) / 2;
+    let goalY = 40;  // Goal at the top center
+
+    // Check collision with left goal post
+    if (puckX - puckRadius < goalX && puckY > goalY && puckY < goalY + goalHeight) {
+        goalPostHit.play(); // Play goal post hit sound
+        puckDx = -puckDx;   // Reverse puck direction after hitting the post
+    }
+
+    // Check collision with right goal post
+    if (puckX + puckRadius > goalX + goalWidth && puckY > goalY && puckY < goalY + goalHeight) {
+        goalPostHit.play(); // Play goal post hit sound
+        puckDx = -puckDx;   // Reverse puck direction after hitting the post
+    }
 }
 
-    
 // Check if a goal is scored
 function checkScore() {
     let goalX = (canvas.width - goalWidth) / 2;
