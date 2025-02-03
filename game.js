@@ -174,6 +174,23 @@ function drawRedPuck(x, y) {
     ctx.fill();
 }
 
+// Draw the red lines beside the goal posts
+function drawGoalLines() {
+    let goalX = (canvas.width - goalWidth) / 2;
+    let goalY = 40;  // Goal at the top center
+
+    // Draw the red lines beside the goalposts (touching the goal posts)
+    let lineOffset = 10;  // Space between the goal post and the red line
+    ctx.beginPath();
+    ctx.moveTo(goalX - lineOffset, goalY);
+    ctx.lineTo(goalX - lineOffset, goalY + goalHeight); 
+    ctx.moveTo(goalX + goalWidth + lineOffset, goalY);
+    ctx.lineTo(goalX + goalWidth + lineOffset, goalY + goalHeight); 
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+}
+
 // Collision detection for the puck and striker
 function checkCollision() {
     let dx = puckX - strikerX;
@@ -206,7 +223,7 @@ function checkCollision() {
         strikerHit.play();  // Play striker hit sound
     }
 
-    // Check for collision with the red puck (moving obstacle)
+    // Check for collision with red puck (moving obstacle)
     let redPuckDx = puckX - redPuckX;
     let redPuckDy = puckY - redPuckY;
     let redPuckDistance = Math.sqrt(redPuckDx * redPuckDx + redPuckDy * redPuckDy);
@@ -235,19 +252,20 @@ function checkCollision() {
         redPuckHit.play();  // Play red puck hit sound
     }
 
-    // Goal post collision (left and right)
+    // Check for collision with the red lines beside the goalposts
     let goalX = (canvas.width - goalWidth) / 2;
-    let goalY = 40;  // Goal at the top center
+    let lineOffset = 10;
+    let goalY = 40;
 
-    // Left goal post collision
-    if (puckX - puckRadius <= goalX && puckY >= goalY && puckY <= goalY + goalHeight) {
+    // Left red line collision
+    if (puckX - puckRadius <= goalX - lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
         puckDx = -puckDx;
         puckDy = -puckDy;
         goalPostHit.play();  // Play goal post hit sound
     }
-
-    // Right goal post collision
-    if (puckX + puckRadius >= goalX + goalWidth && puckY >= goalY && puckY <= goalY + goalHeight) {
+    
+    // Right red line collision
+    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= goalY && puckY <= goalY + goalHeight) {
         puckDx = -puckDx;
         puckDy = -puckDy;
         goalPostHit.play();  // Play goal post hit sound
@@ -268,9 +286,13 @@ function checkScore() {
         goalHorn.play();  // Play goal horn sound
         resetPuck();  // Reset puck position after scoring
     }
+
+    if (goalCount >= 10) {
+        endGame();
+    }
 }
 
-// Reset puck after goal
+// Reset puck after scoring
 function resetPuck() {
     puckX = Math.random() * (canvas.width - 100) + 50;
     puckY = Math.random() * (canvas.height - 100) + 50;
