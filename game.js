@@ -10,9 +10,9 @@ const strikerHit = new Audio('sounds/striker-hit.mp3');
 const redPuckHit = new Audio('sounds/red-puck-hit.mp3');
 const goalPostHit = new Audio('sounds/goal-post-hit.mp3');
 
-let puckX, puckY, puckDx, puckDy, puckRadius = 12,
-    strikerRadius = 100, strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(),
-    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20, playerName;
+let puckX, puckY, puckDx, puckDy, puckRadius, strikerRadius = 100,
+    strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(),
+    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20;
 
 const MAX_SPEED = 6;  // Maximum allowed speed for the orange puck
 
@@ -42,10 +42,8 @@ function startGame() {
 
     // Ensure the image loads before starting the game
     strikerImage.onload = function() {
-        // Show the game screen and hide the pregame menu
         document.getElementById('pregame-menu').style.display = 'none';
         document.getElementById('game-container').style.display = 'block';
-        
         strikerX = canvas.width / 2;
         strikerY = canvas.height - 80; // Adjust striker's initial position
         gameStarted = true;
@@ -56,7 +54,6 @@ function startGame() {
         // Initialize the pucks (orange and red)
         initializePucks();
 
-        // Start the game loop and timer
         gameLoop();
         startTimer();
     };
@@ -84,11 +81,13 @@ function startTimer() {
 
 // Initialize pucks' positions and velocities
 function initializePucks() {
+    // Set initial positions for the pucks
     puckX = Math.random() * (canvas.width - 100) + 50;  // Random X position for the orange puck
     puckY = Math.random() * (canvas.height - 100) + 50;  // Random Y position for the orange puck
     puckDx = Math.random() > 0.5 ? 4 : -4;  // Initial X velocity for the orange puck
     puckDy = Math.random() > 0.5 ? 4 : -4;  // Initial Y velocity for the orange puck
 
+    // Set initial positions and velocity for the red puck (moving obstacle)
     redPuckX = canvas.width / 2;  // Start at the center of the goal area
     redPuckY = 90;  // Position the red puck slightly in front of the goal
     redPuckDx = 5;  // Speed of the red puck
@@ -240,14 +239,14 @@ function checkCollision() {
     let goalX = (canvas.width - goalWidth) / 2;
     let goalY = 40;  // Goal at the top center
 
-    // Left goal post collision (Vertical check)
+    // Left goal post collision
     if (puckX - puckRadius <= goalX && puckY >= goalY && puckY <= goalY + goalHeight) {
         puckDx = -puckDx;
         puckDy = -puckDy;
         goalPostHit.play();  // Play goal post hit sound
     }
 
-    // Right goal post collision (Vertical check)
+    // Right goal post collision
     if (puckX + puckRadius >= goalX + goalWidth && puckY >= goalY && puckY <= goalY + goalHeight) {
         puckDx = -puckDx;
         puckDy = -puckDy;
@@ -354,11 +353,11 @@ function drawGoal() {
     // Goal Posts
     ctx.beginPath();
     ctx.moveTo(goalX, goalY);
-    ctx.lineTo(goalX, goalY + goalHeight); // Left post
+    ctx.lineTo(goalX, goalY + goalHeight); 
     ctx.moveTo(goalX + goalWidth, goalY);
-    ctx.lineTo(goalX + goalWidth, goalY + goalHeight); // Right post
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 4;
+    ctx.lineTo(goalX + goalWidth, goalY + goalHeight); 
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 8;
     ctx.stroke();
 
     // Crossbar
