@@ -42,8 +42,10 @@ function startGame() {
 
     // Ensure the image loads before starting the game
     strikerImage.onload = function() {
+        // Show the game screen and hide the pregame menu
         document.getElementById('pregame-menu').style.display = 'none';
         document.getElementById('game-container').style.display = 'block';
+        
         strikerX = canvas.width / 2;
         strikerY = canvas.height - 80; // Adjust striker's initial position
         gameStarted = true;
@@ -54,6 +56,7 @@ function startGame() {
         // Initialize the pucks (orange and red)
         initializePucks();
 
+        // Start the game loop and timer
         gameLoop();
         startTimer();
     };
