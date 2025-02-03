@@ -67,6 +67,7 @@ function startTimer() {
     let timerInterval = setInterval(function() {
         if (goalCount >= 10) {
             clearInterval(timerInterval); // Stop the timer when 10 goals are scored
+            let topTimes = JSON.parse(localStorage.getItem('topTimes')) || [];
             topTimes.push({ player: playerName, time: timer });
             topTimes.sort((a, b) => a.time - b.time); // Sort by fastest time
             topTimes = topTimes.slice(0, 10); // Keep top 10
@@ -254,7 +255,7 @@ function checkCollision() {
     }
 }
 
-
+    
 // Check if a goal is scored
 function checkScore() {
     let goalX = (canvas.width - goalWidth) / 2;
