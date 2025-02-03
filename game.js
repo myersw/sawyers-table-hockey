@@ -22,7 +22,7 @@ let strikerTouchOffset = 30;  // Stagger the striker above where you touch on mo
 
 // Adjust the sizes for mobile screens
 let goalWidth = isMobile ? 100 : 130;  // Smaller goal on mobile
-let goalHeight = isMobile ? 40 : 50;  // Smaller goal on mobile
+let goalHeight = isMobile ? 30 : 40;  // Smaller goal height for both mobile and desktop
 
 if (isMobile) {
     strikerRadius = 80;  // Slightly smaller striker radius on mobile
@@ -79,7 +79,7 @@ function startTimer() {
     }, 1000);
 }
 
-// Initialize pucks' positions and velocities
+// Set initial positions for the pucks
 function initializePucks() {
     // Set initial positions for the pucks
     puckX = Math.random() * (canvas.width - 100) + 50;  // Random X position for the orange puck
@@ -192,7 +192,7 @@ function drawGoalLines() {
 }
 
 // Collision detection for the puck and striker
-// Check for collisions with red lines beside the goalposts
+// Check for collisions with the red lines beside the goalposts
 function checkCollision() {
     let dx = puckX - strikerX;
     let dy = puckY - strikerY;
@@ -251,22 +251,6 @@ function checkCollision() {
         puckY += Math.sin(redPuckAngle) * overlap;
 
         redPuckHit.play();  // Play red puck hit sound
-    }
-
-    // Check for collision with the red lines beside the goalposts
-    let goalX = (canvas.width - goalWidth) / 2;
-    let lineOffset = 10; // Space between the goalposts and the red lines
-    let lineHeight = goalHeight;  // Length of the red lines
-
-    // Left red line (beside the left goalpost)
-    if (puckX - puckRadius <= goalX - lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
-        puckDx = -puckDx; // Reverse direction
-        puckDy = -puckDy; // Reverse direction to make it bounce off
-    }
-    // Right red line (beside the right goalpost)
-    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
-        puckDx = -puckDx; // Reverse direction
-        puckDy = -puckDy; // Reverse direction to make it bounce off
     }
 }
 
