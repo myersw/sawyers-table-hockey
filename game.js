@@ -82,9 +82,9 @@ function startTimer() {
 
 // Set initial positions for the pucks
 function initializePucks() {
-    // Set initial positions for the pucks
-    puckX = Math.random() * (canvas.width - 100) + 50;  // Random X position for the orange puck
-    puckY = Math.random() * (canvas.height - 100) + 50;  // Random Y position for the orange puck
+    // Set initial position of the orange puck at the center of the canvas
+    puckX = canvas.width / 2;  // Center X position
+    puckY = canvas.height / 2; // Center Y position
     puckDx = Math.random() > 0.5 ? 4 : -4;  // Initial X velocity for the orange puck
     puckDy = Math.random() > 0.5 ? 4 : -4;  // Initial Y velocity for the orange puck
 
