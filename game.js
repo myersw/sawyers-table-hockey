@@ -10,9 +10,9 @@ const strikerHit = new Audio('sounds/striker-hit.mp3');
 const redPuckHit = new Audio('sounds/red-puck-hit.mp3');
 const goalPostHit = new Audio('sounds/goal-post-hit.mp3');
 
-let puckX, puckY, puckDx, puckDy, puckRadius, strikerRadius = 100,
-    strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(),
-    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20;
+let puckX, puckY, puckDx, puckDy, puckRadius = 12,
+    strikerRadius = 100, strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(),
+    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20, playerName;
 
 const MAX_SPEED = 6;  // Maximum allowed speed for the orange puck
 
@@ -81,13 +81,11 @@ function startTimer() {
 
 // Initialize pucks' positions and velocities
 function initializePucks() {
-    // Set initial positions for the pucks
     puckX = Math.random() * (canvas.width - 100) + 50;  // Random X position for the orange puck
     puckY = Math.random() * (canvas.height - 100) + 50;  // Random Y position for the orange puck
     puckDx = Math.random() > 0.5 ? 4 : -4;  // Initial X velocity for the orange puck
     puckDy = Math.random() > 0.5 ? 4 : -4;  // Initial Y velocity for the orange puck
 
-    // Set initial positions and velocity for the red puck (moving obstacle)
     redPuckX = canvas.width / 2;  // Start at the center of the goal area
     redPuckY = 90;  // Position the red puck slightly in front of the goal
     redPuckDx = 5;  // Speed of the red puck
