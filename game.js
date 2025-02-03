@@ -354,11 +354,11 @@ function drawGoal() {
     // Goal Posts
     ctx.beginPath();
     ctx.moveTo(goalX, goalY);
-    ctx.lineTo(goalX, goalY + goalHeight); 
+    ctx.lineTo(goalX, goalY + goalHeight); // Left post
     ctx.moveTo(goalX + goalWidth, goalY);
-    ctx.lineTo(goalX + goalWidth, goalY + goalHeight); 
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 8;
+    ctx.lineTo(goalX + goalWidth, goalY + goalHeight); // Right post
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 4;
     ctx.stroke();
 
     // Crossbar
