@@ -10,9 +10,9 @@ const strikerHit = new Audio('sounds/striker-hit.mp3');
 const redPuckHit = new Audio('sounds/red-puck-hit.mp3');
 const goalPostHit = new Audio('sounds/goal-post-hit.mp3');
 
-let puckX, puckY, puckDx, puckDy, puckRadius = 12,
-    strikerRadius = 100, strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(),
-    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20, playerName;
+let puckX, puckY, puckDx, puckDy, puckRadius, strikerRadius = 100,
+    strikerX, strikerY, goalCount = 0, timer = 0, timeStarted = Date.now(),
+    gameStarted = false, redPuckX, redPuckY, redPuckDx = 5, redPuckRadius = 20;
 
 const MAX_SPEED = 6;  // Maximum allowed speed for the orange puck
 
@@ -42,10 +42,8 @@ function startGame() {
 
     // Ensure the image loads before starting the game
     strikerImage.onload = function() {
-        // Show the game screen and hide the pregame menu
         document.getElementById('pregame-menu').style.display = 'none';
         document.getElementById('game-container').style.display = 'block';
-        
         strikerX = canvas.width / 2;
         strikerY = canvas.height - 80; // Adjust striker's initial position
         gameStarted = true;
@@ -56,7 +54,6 @@ function startGame() {
         // Initialize the pucks (orange and red)
         initializePucks();
 
-        // Start the game loop and timer
         gameLoop();
         startTimer();
     };
@@ -84,11 +81,13 @@ function startTimer() {
 
 // Initialize pucks' positions and velocities
 function initializePucks() {
+    // Set initial positions for the pucks
     puckX = Math.random() * (canvas.width - 100) + 50;  // Random X position for the orange puck
     puckY = Math.random() * (canvas.height - 100) + 50;  // Random Y position for the orange puck
     puckDx = Math.random() > 0.5 ? 4 : -4;  // Initial X velocity for the orange puck
     puckDy = Math.random() > 0.5 ? 4 : -4;  // Initial Y velocity for the orange puck
 
+    // Set initial positions and velocity for the red puck (moving obstacle)
     redPuckX = canvas.width / 2;  // Start at the center of the goal area
     redPuckY = 90;  // Position the red puck slightly in front of the goal
     redPuckDx = 5;  // Speed of the red puck
@@ -175,7 +174,25 @@ function drawRedPuck(x, y) {
     ctx.fill();
 }
 
+// Draw the red lines beside the goal posts
+function drawGoalLines() {
+    let goalX = (canvas.width - goalWidth) / 2;
+    let goalY = 40;  // Goal at the top center
+
+    // Draw the red lines beside the goalposts (touching the goal posts)
+    let lineOffset = 10;  // Space between the goal post and the red line
+    ctx.beginPath();
+    ctx.moveTo(goalX - lineOffset, goalY);
+    ctx.lineTo(goalX - lineOffset, goalY + goalHeight); 
+    ctx.moveTo(goalX + goalWidth + lineOffset, goalY);
+    ctx.lineTo(goalX + goalWidth + lineOffset, goalY + goalHeight); 
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+}
+
 // Collision detection for the puck and striker
+// Check for collisions with red lines beside the goalposts
 function checkCollision() {
     let dx = puckX - strikerX;
     let dy = puckY - strikerY;
@@ -207,7 +224,7 @@ function checkCollision() {
         strikerHit.play();  // Play striker hit sound
     }
 
-    // Check for collision with the red puck (moving obstacle)
+    // Check for collision with red puck (moving obstacle)
     let redPuckDx = puckX - redPuckX;
     let redPuckDy = puckY - redPuckY;
     let redPuckDistance = Math.sqrt(redPuckDx * redPuckDx + redPuckDy * redPuckDy);
@@ -236,42 +253,47 @@ function checkCollision() {
         redPuckHit.play();  // Play red puck hit sound
     }
 
-    // Goal post collision (left and right)
+    // Check for collision with the red lines beside the goalposts
     let goalX = (canvas.width - goalWidth) / 2;
-    let goalY = 40;  // Goal at the top center
+    let lineOffset = 10; // Space between the goalposts and the red lines
+    let lineHeight = goalHeight;  // Length of the red lines
 
-    // Left goal post collision (Vertical check)
-    if (puckX - puckRadius <= goalX && puckY >= goalY && puckY <= goalY + goalHeight) {
-        puckDx = -puckDx;
-        puckDy = -puckDy;
-        goalPostHit.play();  // Play goal post hit sound
+    // Left red line (beside the left goalpost)
+    if (puckX - puckRadius <= goalX - lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
+        puckDx = -puckDx; // Reverse direction
+        puckDy = -puckDy; // Reverse direction to make it bounce off
     }
-
-    // Right goal post collision (Vertical check)
-    if (puckX + puckRadius >= goalX + goalWidth && puckY >= goalY && puckY <= goalY + goalHeight) {
-        puckDx = -puckDx;
-        puckDy = -puckDy;
-        goalPostHit.play();  // Play goal post hit sound
+    // Right red line (beside the right goalpost)
+    if (puckX + puckRadius >= goalX + goalWidth + lineOffset && puckY >= 40 && puckY <= (40 + lineHeight)) {
+        puckDx = -puckDx; // Reverse direction
+        puckDy = -puckDy; // Reverse direction to make it bounce off
     }
 }
+
 
 // Check if a goal is scored
 function checkScore() {
     let goalX = (canvas.width - goalWidth) / 2;
-    let goalY = 40;  // Goal at the top center
+    let goalY = 40;  // Goal area at the top center
 
-    // Check if puck is fully within the goal area
+    // Check if puck is fully within the goal area (not crossing the goalposts)
     if (puckY - puckRadius < goalY + goalHeight && puckY + puckRadius > goalY &&
         puckX - puckRadius >= goalX && puckX + puckRadius <= goalX + goalWidth) {
-        // Goal scored
+        
+        // Goal scored: Only count the goal if the puck is fully inside the goal width
         goalCount++;
         document.getElementById('goal-count').textContent = `Goals: ${goalCount}`;
         goalHorn.play();  // Play goal horn sound
         resetPuck();  // Reset puck position after scoring
     }
+
+    // Check if goal count reaches 10 and end the game
+    if (goalCount >= 10) {
+        endGame();
+    }
 }
 
-// Reset puck after goal
+// Reset puck after scoring
 function resetPuck() {
     puckX = Math.random() * (canvas.width - 100) + 50;
     puckY = Math.random() * (canvas.height - 100) + 50;
@@ -373,9 +395,9 @@ function drawGoal() {
     let netSpacing = 10;
     for (let i = 0; i < goalHeight; i += netSpacing) {
         ctx.beginPath();
-        ctx.moveTo(goalX + 5, goalY + i);
-        ctx.lineTo(goalX + goalWidth - 5, goalY + i);
-        ctx.strokeStyle = 'white';
+        ctx.moveTo(goalX, goalY + i);
+        ctx.lineTo(goalX + goalWidth, goalY + i);
+        ctx.strokeStyle = 'lightgray';
         ctx.lineWidth = 2;
         ctx.stroke();
     }
