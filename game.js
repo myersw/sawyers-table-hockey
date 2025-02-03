@@ -175,23 +175,6 @@ function drawRedPuck(x, y) {
     ctx.fill();
 }
 
-// Draw the red lines beside the goal posts
-function drawGoalLines() {
-    let goalX = (canvas.width - goalWidth) / 2;
-    let goalY = 40;  // Goal at the top center
-
-    // Draw the red lines beside the goalposts (touching the goal posts)
-    let lineOffset = 10;  // Space between the goal post and the red line
-    ctx.beginPath();
-    ctx.moveTo(goalX - lineOffset, goalY);
-    ctx.lineTo(goalX - lineOffset, goalY + goalHeight); 
-    ctx.moveTo(goalX + goalWidth + lineOffset, goalY);
-    ctx.lineTo(goalX + goalWidth + lineOffset, goalY + goalHeight); 
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 8;
-    ctx.stroke();
-}
-
 // Collision detection for the puck and striker
 // Check for collisions with the red lines beside the goalposts
 function checkCollision() {
